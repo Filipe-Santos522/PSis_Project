@@ -19,7 +19,7 @@ typedef struct paddle_position_t{
 
 typedef struct message{
     int type; //1 - connect, 2 - release_ball, 3 - send_ball, 4 - move_ball, 5 - disconnect
-    ball_position_t* ball;
+    ball_position_t ball;
 } message;
 
 
@@ -29,3 +29,5 @@ void moove_paddle (paddle_position_t * paddle, int direction);
 void place_ball_random(ball_position_t * ball);
 void moove_ball(ball_position_t * ball);
 void draw_ball(WINDOW *win, ball_position_t * ball, int draw);
+void make_play(int key, WINDOW* my_win, paddle_position_t * paddle, ball_position_t * ball);
+void update_ball_on_screen(WINDOW * my_win, ball_position_t * ball);

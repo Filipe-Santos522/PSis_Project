@@ -31,7 +31,7 @@ void Socket_identification(int sock_fd){
     }
 }
 
-void Send_Reply(int sock_fd, message* reply_message, struct sockaddr_in* client_addr){
+void Send_Reply(int sock_fd, struct message* reply_message, struct sockaddr_in* client_addr){
     int nbytes = sendto(sock_fd, reply_message, sizeof(message), 0,  client_addr, sizeof(struct sockaddr_in));
     if (nbytes == -1){
         perror("sendto");
@@ -39,7 +39,7 @@ void Send_Reply(int sock_fd, message* reply_message, struct sockaddr_in* client_
     }
 }
 
-void Receive_message(int sock_fd, message* ball, struct sockaddr_in* client_addr){
+void Receive_message(int sock_fd, struct message* ball, struct sockaddr_in* client_addr){
 
    int nbytes = recvfrom(sock_fd, ball, sizeof(*ball), 0, client_addr, sizeof(struct sockaddr_in));
    if (nbytes == -1){

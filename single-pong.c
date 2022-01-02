@@ -109,10 +109,29 @@ void draw_ball(WINDOW *win, ball_position_t * ball, int draw){
     wrefresh(win);
 }
 
+void make_play(int key, WINDOW* my_win, paddle_position_t * paddle, ball_position_t * ball){
+    if (key == KEY_LEFT || key == KEY_RIGHT || key == KEY_UP || key == KEY_DOWN){
+        draw_paddle(my_win, paddle, false);
+        moove_paddle (paddle, key);
+        draw_paddle(my_win, paddle, true);
+
+        draw_ball(my_win, ball, false);
+        moove_ball(ball);
+        draw_ball(my_win, ball, true);
+    }
+}
+
+void update_ball_on_screen(WINDOW* my_win, ball_position_t * ball){
+    draw_ball(my_win, ball, false);
+    moove_ball(ball);
+    draw_ball(my_win, ball, true);
+}
+
 paddle_position_t paddle;
 ball_position_t ball;
 
-int main(){
+
+int teste(){
 	initscr();		    	/* Start curses mode 		*/
 	cbreak();				/* Line buffering disabled	*/
     keypad(stdscr, TRUE);   /* We get F1, F2 etc..		*/
