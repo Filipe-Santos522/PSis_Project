@@ -26,7 +26,7 @@ int main(int argc, char** argv){
     inet_pton(AF_INET, argv[1], &server_addr.sin_addr);
 
     int sock_fd=Socket_creation();
-    ball_position_t x;
+    ball_position_t old_ball;
     message m;
     m.type = 1; /* Set message type to "connect"*/
     Send_Reply(sock_fd, &m, &server_addr); /* Send connect message */
@@ -48,7 +48,6 @@ int main(int argc, char** argv){
 	wrefresh(message_win);
 
     new_paddle(&paddle, PADLE_SIZE);
-    draw_paddle(my_win, &paddle, true);
 
 
     int key;
@@ -56,6 +55,8 @@ int main(int argc, char** argv){
         Receive_message(sock_fd, &m, &server_addr);
         switch (m.type){
             case 3:
+                draw_ball(my_win, &m.ball, true);
+                draw_paddle(my_win, &paddle, true);
                 key = -1;
                 m.type = 4;
                 while(key != 113 && key != 114){
@@ -65,24 +66,34 @@ int main(int argc, char** argv){
                     wrefresh(message_win);
                     Send_Reply(sock_fd, &m, &server_addr);
                 }
-
+                old_ball=m.ball;
                 /* Check which key was pressed to stop playing*/
                 if (key == 113){
                     m.type = 5; /* Change message type to "disconnect"*/
                     Send_Reply(sock_fd, &m, &server_addr); /* Send "disconnect" message*/
+                    endwin();
+                    exit(1);
                     break;
                 }
                 else if (key == 114){
                     m.type = 2; /* Change message type to "release ball"*/
+                    draw_paddle(my_win, &paddle, false);
+
                     Send_Reply(sock_fd, &m, &server_addr); /* Send "release ball" message*/
                 }
                 break;
             
             case 4:
                 /* Update the ball position on the screen (without paddle)*/
-                update_ball_on_screen(my_win, &m.ball);
+                //update_ball_on_screen(my_win, &m.ball, paddle);
+                draw_ball(my_win, &old_ball, false);
+                draw_ball(my_win, &m.ball, true);
+                old_ball=m.ball;
                 break;
-
+            case 6:
+                draw_ball(my_win, &m.ball, true);
+                old_ball=m.ball;
+                break;
             default:
                 perror("invalid message type");
                 exit(-1);

@@ -41,6 +41,9 @@ int main(int argc, char* argv[]){
                 Send_Reply(sock_fd, &m, &Players[0]);
                 printf("sent message");
                 Curr_Player=0;
+            }else{
+                m.type=6;
+                Send_Reply(sock_fd, &m, &Players[Num_players-1]);
             }
 
             break;
@@ -64,6 +67,7 @@ int main(int argc, char* argv[]){
             break;
         case 4:
             /* move ball - update ball on screen */
+            m.type=4;
             for(int j=0; j<Num_players; j++){
                 if(j!=Curr_Player)
                     Send_Reply(sock_fd, &m, &Players[j]);
