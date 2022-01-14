@@ -1,3 +1,9 @@
+/* Pong functions source code file:
+ * Original code given by the professors and adapted by:
+ * Filipe Santos - 90068
+ * Alexandre Fonseca - 90210
+ */
+
 #include <stdlib.h>
 #include <ncurses.h>
 
@@ -5,27 +11,15 @@
 #include "pong.h"
 #include "single-pong.h"
 
-/*WINDOW * message_win;*/
 
-
-/*typedef struct ball_position_t{
-    int x, y;
-    int up_hor_down; //  -1 up, 0 horizontal, 1 down
-    int left_ver_right; //  -1 left, 0 vertical,1 right
-    char c;
-} ball_position_t;*/
-
-/*typedef struct paddle_position_t{
-    int x, y;
-    int length;
-} paddle_position_t;*/
-
+// Function that creates a new paddle
 void new_paddle (paddle_position_t * paddle, int legth){
     paddle->x = WINDOW_SIZE/2;
     paddle->y = WINDOW_SIZE-2;
     paddle->length = legth;
 }
 
+// Function that draws a paddle on the screen
 void draw_paddle(WINDOW *win, paddle_position_t * paddle, int delete){
     int ch;
     if(delete){
@@ -42,7 +36,7 @@ void draw_paddle(WINDOW *win, paddle_position_t * paddle, int delete){
     wrefresh(win);
 }
 
-
+// Function that moves the paddle and handles collisions with the ball
 void moove_paddle (paddle_position_t * paddle, int direction, ball_position_t *ball){
     int paddle_aux;
 
@@ -106,6 +100,7 @@ void moove_paddle (paddle_position_t * paddle, int direction, ball_position_t *b
     }
 }
 
+// Function to place the ball in a random position
 void place_ball_random(ball_position_t * ball){
     ball->x = rand() % WINDOW_SIZE ;
     ball->y = rand() % WINDOW_SIZE ;
@@ -113,30 +108,8 @@ void place_ball_random(ball_position_t * ball){
     ball->up_hor_down = rand() % 3 -1; //  -1 up, 1 - down
     ball->left_ver_right = rand() % 3 -1 ; // 0 vertical, -1 left, 1 right
 }
-/*void moove_ball(ball_position_t * ball){
-    
-    int next_x = ball->x + ball->left_ver_right;
-    if( next_x == 0 || next_x == WINDOW_SIZE-1){
-        ball->up_hor_down = rand() % 3 -1 ;
-        ball->left_ver_right *= -1;
-        mvwprintw(message_win, 2,1,"left right win");
-        wrefresh(message_win);
-     }else{
-        ball->x = next_x;
-    }
 
-    
-    int next_y = ball->y + ball->up_hor_down;
-    if( next_y == 0 || next_y == WINDOW_SIZE-1){
-        ball->up_hor_down *= -1;
-        ball->left_ver_right = rand() % 3 -1;
-        mvwprintw(message_win, 2,1,"bottom top win");
-        wrefresh(message_win);
-    }else{
-        ball -> y = next_y;
-    }
-}*/
-
+// Function to move the ball and handle collisions with the paddle
 void moove_ball(ball_position_t * ball, paddle_position_t paddle){
     
     int next_x = ball->x + ball->left_ver_right;
@@ -181,11 +154,7 @@ void moove_ball(ball_position_t * ball, paddle_position_t paddle){
 }
 
 
-
-
-
-
-
+// Function to draw the ball on the screen
 void draw_ball(WINDOW *win, ball_position_t * ball, int draw){
     int ch;
     if(draw){
@@ -198,6 +167,7 @@ void draw_ball(WINDOW *win, ball_position_t * ball, int draw){
     wrefresh(win);
 }
 
+// Function that updates the screen after a play is made. Used on the client with the ball
 void make_play(int key, WINDOW* my_win, paddle_position_t * paddle, ball_position_t * ball){
     if (key == KEY_LEFT || key == KEY_RIGHT || key == KEY_UP || key == KEY_DOWN){
         draw_paddle(my_win, paddle, false);
@@ -210,54 +180,9 @@ void make_play(int key, WINDOW* my_win, paddle_position_t * paddle, ball_positio
     }
 }
 
-void update_ball_on_screen(WINDOW* my_win, ball_position_t * ball, paddle_position_t paddle){
+// Function that updates the ball for the clients that do not have the ball
+/*void update_ball_on_screen(WINDOW* my_win, ball_position_t * ball, paddle_position_t paddle){
     draw_ball(my_win, ball, false);
     moove_ball(ball, paddle);
     draw_ball(my_win, ball, true);
-}
-
-paddle_position_t paddle;
-ball_position_t ball;
-
-
-int teste(){
-	initscr();		    	/* Start curses mode 		*/
-	cbreak();				/* Line buffering disabled	*/
-    keypad(stdscr, TRUE);   /* We get F1, F2 etc..		*/
-	noecho();			    /* Don't echo() while we do getch */
-
-    /* creates a window and draws a border */
-    WINDOW * my_win = newwin(WINDOW_SIZE, WINDOW_SIZE, 0, 0);
-    box(my_win, 0 , 0);	
-	wrefresh(my_win);
-    keypad(my_win, true);
-    /* creates a window and draws a border */
-    message_win = newwin(5, WINDOW_SIZE+10, WINDOW_SIZE, 0);
-    box(message_win, 0 , 0);	
-	wrefresh(message_win);
-
-
-    new_paddle(&paddle, PADLE_SIZE);
-    draw_paddle(my_win, &paddle, true);
-
-    place_ball_random(&ball);
-    draw_ball(my_win, &ball, true);
-
-    int key = -1;
-    while(key != 27){
-        key = wgetch(my_win);		
-        if (key == KEY_LEFT || key == KEY_RIGHT || key == KEY_UP || key == KEY_DOWN){
-            draw_paddle(my_win, &paddle, false);
-            //moove_paddle (&paddle, key);
-            draw_paddle(my_win, &paddle, true);
-
-            draw_ball(my_win, &ball, false);
-            //moove_ball(&ball);
-            draw_ball(my_win, &ball, true);
-        }
-        mvwprintw(message_win, 1,1,"%c key pressed", key);
-        wrefresh(message_win);	
-    }
-
-    exit(0);
-}
+}*/
